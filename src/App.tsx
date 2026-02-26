@@ -6,8 +6,20 @@ import {
 } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 
-// Initialize Gemini AI
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY as string });
+// Lazy initialize Gemini AI to prevent crashes on Vercel if environment variables are missing on load
+const getGeminiAI = () => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey || apiKey === 'undefined') {
+    console.warn("GEMINI_API_KEY is missing. AI analysis will fall back to standard text.");
+    return null;
+  }
+  try {
+    return new GoogleGenAI({ apiKey });
+  } catch (e) {
+    console.error("Failed to initialize Gemini AI:", e);
+    return null;
+  }
+};
 
 // Types for weather data
 interface WeatherData {
@@ -125,16 +137,21 @@ export default function App() {
       // Step 3: Peak AI Integration (Gemini Analysis)
       let aiAnalysis = "AI analysis unavailable at this time.";
       try {
-        const prompt = `You are the core AI of "Amarsipahi Weather", an advanced, highly intelligent meteorological system. 
-        Provide a 2-sentence, highly analytical, and slightly futuristic atmospheric briefing for ${name}, ${country}. 
-        Current telemetry: ${current.temperature_2m}°C (feels like ${current.apparent_temperature}°C), ${condition}, ${current.relative_humidity_2m}% humidity, wind ${current.wind_speed_10m} km/h, UV index ${current.uv_index}. 
-        Sentence 1: Analyze the atmosphere. Sentence 2: Give a precise, tactical recommendation for the user. Keep it professional, crisp, and intelligent.`;
-        
-        const response = await ai.models.generateContent({
-          model: "gemini-3.1-pro-preview",
-          contents: prompt,
-        });
-        aiAnalysis = response.text || aiAnalysis;
+        const ai = getGeminiAI();
+        if (ai) {
+          const prompt = `You are the core AI of "Amarsipahi Weather", an advanced, highly intelligent meteorological system. 
+          Provide a 2-sentence, highly analytical, and slightly futuristic atmospheric briefing for ${name}, ${country}. 
+          Current telemetry: ${current.temperature_2m}°C (feels like ${current.apparent_temperature}°C), ${condition}, ${current.relative_humidity_2m}% humidity, wind ${current.wind_speed_10m} km/h, UV index ${current.uv_index}. 
+          Sentence 1: Analyze the atmosphere. Sentence 2: Give a precise, tactical recommendation for the user. Keep it professional, crisp, and intelligent.`;
+          
+          const response = await ai.models.generateContent({
+            model: "gemini-3.1-pro-preview",
+            contents: prompt,
+          });
+          aiAnalysis = response.text || aiAnalysis;
+        } else {
+          aiAnalysis = `Atmospheric conditions indicate ${condition.toLowerCase()} with a perceived temperature of ${current.apparent_temperature}°C. Standard operational precautions advised. (AI Offline - Missing API Key)`;
+        }
       } catch (aiErr) {
         console.error("AI Generation failed:", aiErr);
         // Fallback if AI fails, app still works
