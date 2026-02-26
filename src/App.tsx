@@ -8,7 +8,8 @@ import { GoogleGenAI } from '@google/genai';
 
 // Lazy initialize Gemini AI to prevent crashes on Vercel if environment variables are missing on load
 const getGeminiAI = () => {
-  const apiKey = process.env.GEMINI_API_KEY;
+  // Support both AI Studio (process.env) and Vercel (import.meta.env.VITE_*)
+  const apiKey = process.env.GEMINI_API_KEY || (import.meta as any).env.VITE_GEMINI_API_KEY;
   if (!apiKey || apiKey === 'undefined') {
     console.warn("GEMINI_API_KEY is missing. AI analysis will fall back to standard text.");
     return null;
