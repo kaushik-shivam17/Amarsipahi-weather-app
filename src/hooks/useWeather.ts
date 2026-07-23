@@ -82,7 +82,7 @@ async function streamAIAnalysis(
   onChunk: (text: string, done: boolean) => void
 ) {
   const condition = getCondition(current.weather_code);
-  const fallback = `${condition} conditions prevail over ${geo.name} with temperatures at ${Math.round(current.temperature_2m)}°C (feels like ${Math.round(current.apparent_temperature)}°C). Wind at ${Math.round(current.wind_speed_10m)} km/h, humidity ${current.relative_humidity_2m}%. Standard precautions advised. (AI Offline — add GEMINI_API_KEY)`;
+  const fallback = `${condition} conditions over ${geo.name}. Temperature sitting at ${Math.round(current.temperature_2m)}°C, feeling closer to ${Math.round(current.apparent_temperature)}°C. Wind at ${Math.round(current.wind_speed_10m)} km/h with ${current.relative_humidity_2m}% humidity — dress accordingly.`;
 
   const ai = getGeminiAI();
   if (!ai) {
@@ -90,11 +90,10 @@ async function streamAIAnalysis(
     return;
   }
 
-  const prompt = `You are the AI core of "Amarsipahi Weather", an advanced meteorological intelligence system.
-Deliver a 3-sentence atmospheric briefing for ${geo.name}, ${geo.country}.
-Telemetry: ${current.temperature_2m}°C (feels ${current.apparent_temperature}°C), ${condition}, ${current.relative_humidity_2m}% humidity, ${current.wind_speed_10m} km/h wind, UV ${current.uv_index}, pressure ${current.surface_pressure} hPa.
-Sentence 1: Precise atmospheric analysis. Sentence 2: Notable risks or highlights. Sentence 3: Tactical recommendation.
-Be crisp, intelligent, and slightly futuristic. No fluff.`;
+  const prompt = `Write a 3-sentence weather briefing for ${geo.name}, ${geo.country}.
+Current conditions: ${current.temperature_2m}°C (feels ${current.apparent_temperature}°C), ${condition}, ${current.relative_humidity_2m}% humidity, ${current.wind_speed_10m} km/h wind, UV ${current.uv_index}, pressure ${current.surface_pressure} hPa.
+Sentence 1: Describe what the weather actually feels like right now. Sentence 2: Any standout risks or things to note. Sentence 3: A specific practical tip for the day.
+Keep it sharp, human, and useful — no filler.`;
 
   try {
     const response = await ai.models.generateContentStream({

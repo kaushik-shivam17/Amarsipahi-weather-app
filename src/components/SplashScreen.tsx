@@ -37,7 +37,7 @@ export default function SplashScreen() {
           AMARSIPAHI
         </h1>
         <p className="text-sky-400/60 font-mono text-xs tracking-[0.5em] uppercase mb-8">
-          Weather Intelligence OS
+          Weather System
         </p>
 
         {/* Boot sequence lines */}

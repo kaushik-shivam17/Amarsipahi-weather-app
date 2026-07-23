@@ -4,7 +4,7 @@ import { Activity, Loader2, Zap, Thermometer } from 'lucide-react';
 import SplashScreen from './components/SplashScreen';
 import SearchBar from './components/SearchBar';
 import WeatherHero from './components/WeatherHero';
-import AIAnalysis from './components/AIAnalysis';
+import WeatherBrief from './components/AIAnalysis';
 import MetricsGrid from './components/MetricsGrid';
 import HourlyChart from './components/HourlyChart';
 import DailyForecast from './components/DailyForecast';
@@ -31,7 +31,7 @@ const loadingSteps = [
   'Establishing satellite uplink...',
   'Calibrating atmospheric sensors...',
   'Running predictive models...',
-  'Synthesizing AI analysis...',
+  'Crunching the numbers...',
   'Fetching air quality data...',
 ];
 
@@ -166,7 +166,7 @@ export default function App() {
               AMARSIPAHI <span className="text-sky-500 font-light">WEATHER</span>
             </h1>
             <p className="text-sky-200/40 font-mono text-[9px] tracking-[0.5em] uppercase mt-1">
-              Global Atmospheric Intelligence OS
+              Global Weather System
             </p>
           </div>
 
@@ -244,9 +244,9 @@ export default function App() {
                 exit={{ opacity: 0 }}
                 className="w-full grid grid-cols-1 md:grid-cols-12 gap-5"
               >
-                {/* Row 1: Hero + AI */}
+                {/* Row 1: Hero + Brief */}
                 <WeatherHero weather={weather} unit={unit} />
-                <AIAnalysis text={weather.aiAnalysis} streaming={weather.aiStreaming} />
+                <WeatherBrief text={weather.aiAnalysis} streaming={weather.aiStreaming} />
 
                 {/* Row 2: 6 Metric cards */}
                 <MetricsGrid weather={weather} unit={unit} />
@@ -299,15 +299,11 @@ export default function App() {
         {/* Footer */}
         <footer className="w-full mt-12 py-5 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-3">
           <p className="text-[9px] uppercase tracking-[0.35em] text-slate-600 font-mono">
-            Amarsipahi Weather OS • Build 3.0 • Data: Open-Meteo
+            Amarsipahi Weather OS • Build 3.0
           </p>
-          <div className="flex items-center gap-4 text-[9px] uppercase tracking-[0.25em] text-slate-600 font-mono">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Systems Nominal
-            </div>
-            <span>·</span>
-            <span>Gemini 2.0 Flash</span>
+          <div className="flex items-center gap-2 text-[9px] uppercase tracking-[0.25em] text-slate-600 font-mono">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            Systems Nominal
           </div>
         </footer>
       </div>
